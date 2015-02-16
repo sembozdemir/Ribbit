@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.parse.ParseAnalytics;
+
 import java.util.Locale;
 
 
@@ -39,6 +41,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Track it for Analytics
+        ParseAnalytics.trackAppOpened(getIntent());
 
         //Go to LoginActivity
         Intent intent = new Intent(this, LoginActivity.class);
