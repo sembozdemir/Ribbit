@@ -40,7 +40,7 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="@string/sign_up_text"
         android:id="@+id/buttonSignUp"
         android:layout_below="@+id/passwordField"
         android:layout_alignParentLeft="true"
