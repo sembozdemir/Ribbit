@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,12 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.parse.ParseAnalytics;
+import com.parse.ParseUser;
 
 import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
+    public static final String TAG = MainActivity.class.getSimpleName();
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -45,11 +48,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Track it for Analytics
         ParseAnalytics.trackAppOpened(getIntent());
 
-        //Go to LoginActivity
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // If set, this activity will become the start of a new task on this history stack.
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK); // If set in an Intent passed to Context.startActivity(), this flag will cause any existing task that would be associated with the activity to be cleared before the activity is started.
-        startActivity(intent); // history stackin tabanında LoginActivity var artık
+        ParseUser currentUser = ParseUser.getCurrentUser();
+        if (currentUser == null) {
+            //Go to LoginActivity
+            goToLoginActivity();
+        } else {
+            Log.i(TAG, currentUser.getUsername());
+        }
+
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -86,6 +92,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
+    private void goToLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // If set, this activity will become the start of a new task on this history stack.
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK); // If set in an Intent passed to Context.startActivity(), this flag will cause any existing task that would be associated with the activity to be cleared before the activity is started.
+        startActivity(intent); // history stackin tabanında LoginActivity var artık
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -101,12 +114,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings: return true;
+            case R.id.action_logout: logout(); break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        ParseUser.logOut();
+        goToLoginActivity();
     }
 
     @Override
